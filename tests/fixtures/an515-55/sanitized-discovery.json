@@ -1,0 +1,21 @@
+{
+  "identity": {
+    "manufacturer": "Acer",
+    "family": "Nitro 5",
+    "model": "AN515-55",
+    "sku": "SANITIZED",
+    "biosVendor": "Insyde Corp.",
+    "biosVersion": "REDACTED",
+    "operatingSystem": "Windows",
+    "osBuild": "Windows 11",
+    "fingerprint": "fixture-an51555"
+  },
+  "adapter": "windows-identity-v1",
+  "fans": [],
+  "sensors": [],
+  "capabilities": [],
+  "diagnostics": {
+    "probeMode": "read-only",
+    "fanWrites": "disabled"
+  }
+}

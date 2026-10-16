@@ -1,0 +1,109 @@
+openapi: 3.1.0
+info:
+  title: FanForge Local API
+  version: 1.0.0
+  description: Read-only local monitoring contract. Mutation routes are reserved and fail closed.
+servers:
+  - url: http://127.0.0.1:4077/api/v1
+paths:
+  /health:
+    get:
+      operationId: health
+      responses:
+        '200': { description: Agent is ready, content: { application/json: { schema: { $ref: '#/components/schemas/Health' } } } }
+  /system:
+    get:
+      operationId: getSystem
+      responses:
+        '200': { description: Hardware identity and capability evidence, content: { application/json: { schema: { $ref: '#/components/schemas/System' } } } }
+  /fans:
+    get:
+      operationId: getFans
+      responses:
+        '200': { description: Fan inventory }
+  /sensors:
+    get:
+      operationId: getSensors
+      responses:
+        '200': { description: Sensor inventory }
+  /safety:
+    get:
+      operationId: getSafety
+      responses:
+        '200': { description: Safety supervisor state }
+  /telemetry:
+    get:
+      operationId: streamTelemetry
+      description: Upgrade to a WebSocket that publishes one TelemetryFrame per sampling interval.
+      responses:
+        '101': { description: WebSocket upgrade }
+  /fans/{id}/manual:
+    post:
+      operationId: requestManualMode
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '409': { description: Writes are disabled or hardware is not verified, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /fans/{id}/auto:
+    post:
+      operationId: restoreAutomaticMode
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '409': { description: Writes are disabled or hardware is not verified, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /curves/{id}:
+    put:
+      operationId: saveCurve
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        '409': { description: Writes are disabled or hardware is not verified, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+  /profiles/activate:
+    post:
+      operationId: activateProfile
+      responses:
+        '409': { description: Writes are disabled or hardware is not verified, content: { application/json: { schema: { $ref: '#/components/schemas/ApiError' } } } }
+components:
+  schemas:
+    Health:
+      type: object
+      required: [status, apiVersion, mode]
+      properties:
+        status: { const: ok }
+        apiVersion: { const: v1 }
+        mode: { const: read_only }
+    HardwareIdentity:
+      type: object
+      required: [manufacturer, model, operatingSystem, fingerprint]
+      properties:
+        manufacturer: { type: string }
+        family: { type: [string, 'null'] }
+        model: { type: string }
+        sku: { type: [string, 'null'] }
+        biosVendor: { type: [string, 'null'] }
+        biosVersion: { type: [string, 'null'] }
+        operatingSystem: { type: string }
+        osBuild: { type: [string, 'null'] }
+        fingerprint: { type: string }
+    Capability:
+      type: object
+      required: [operation, status, adapter, evidence, restorationSupported, reason]
+      properties:
+        operation: { type: string }
+        status: { enum: [monitor_only, controllable, unsupported, unknown] }
+        adapter: { type: string }
+        evidence: { enum: [detected, profile_matched, lab_verified] }
+        restorationSupported: { type: boolean }
+        reason: { type: string }
+    System:
+      type: object
+      required: [identity, adapter, capabilities, diagnostics]
+      properties:
+        identity: { $ref: '#/components/schemas/HardwareIdentity' }
+        adapter: { type: string }
+        capabilities: { type: array, items: { $ref: '#/components/schemas/Capability' } }
+        diagnostics: { type: object, additionalProperties: { type: string } }
+    ApiError:
+      type: object
+      required: [code, message]
+      properties:
+        code: { enum: [unsupported_hardware, bios_not_verified, telemetry_stale, lease_unavailable, restore_failed, adapter_error] }
+        message: { type: string }
+

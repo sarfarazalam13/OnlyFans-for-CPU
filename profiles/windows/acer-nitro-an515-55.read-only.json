@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "acer.nitro.an515-55.read-only",
+  "manufacturer": "Acer",
+  "models": ["AN515-55"],
+  "biosAllowlist": [],
+  "adapter": "windows-identity-v1",
+  "monitoringVerified": false,
+  "controlVerified": false,
+  "restorationVerified": false,
+  "evidence": [
+    "Exact SKU, BIOS revision, and sensor interface must be captured on the dedicated test unit."
+  ]
+}
+

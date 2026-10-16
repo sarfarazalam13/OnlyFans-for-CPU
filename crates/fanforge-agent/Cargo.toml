@@ -1,0 +1,16 @@
+[package]
+name = "fanforge-agent"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+fanforge-api = { path = "../fanforge-api" }
+fanforge-core = { path = "../fanforge-core" }
+fanforge-safety = { path = "../fanforge-safety" }
+fanforge-windows = { path = "../fanforge-windows" }
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
